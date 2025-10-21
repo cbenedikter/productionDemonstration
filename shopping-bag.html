@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="https://www.iqos.com/content/dam/iqos/global/marketing/brand/logo/nbw/favicon.ico">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "d01952d7-5efd-4dbf-89c7-8d7606ab14b0",
+            });
+        });
+    </script>
     <title>Shopping Bag - IQOS</title>
     <style>
         * {
@@ -439,6 +449,137 @@
                 flex-wrap: wrap;
             }
         }
+
+        /* Checkout Confirmation Modal Styles */
+        .checkout-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .checkout-modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .checkout-modal-content {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: slideUp 0.3s ease;
+            text-align: center;
+        }
+
+        .checkout-success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00A3A1 0%, #00D4D4 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+            animation: checkmark 0.5s ease;
+        }
+
+        .checkout-modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .checkout-modal-message {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .checkout-order-number {
+            background-color: #F5F5F5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .checkout-order-number strong {
+            color: #00A3A1;
+            font-size: 1.1rem;
+        }
+
+        .checkout-modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .checkout-modal-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .checkout-modal-btn-primary {
+            background-color: #34303d;
+            color: #ffffff;
+        }
+
+        .checkout-modal-btn-primary:hover {
+            background-color: #00d1d2;
+        }
     </style>
 </head>
 <body>
@@ -506,6 +647,23 @@
                     <input type="text" placeholder="Enter promo code" id="promo-input">
                     <button id="apply-promo">Apply</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Confirmation Modal -->
+    <div class="checkout-modal-overlay" id="checkout-modal">
+        <div class="checkout-modal-content">
+            <div class="checkout-success-icon">✓</div>
+            <h2 class="checkout-modal-title">Order Placed Successfully!</h2>
+            <p class="checkout-modal-message">
+                Thank you for your purchase. Your order has been confirmed and will be processed shortly.
+            </p>
+            <div class="checkout-order-number">
+                <strong>Order #<span id="order-number"></span></strong>
+            </div>
+            <div class="checkout-modal-actions">
+                <button class="checkout-modal-btn checkout-modal-btn-primary" id="return-home">Return to Shop</button>
             </div>
         </div>
     </div>
@@ -617,13 +775,64 @@
             }
         }
 
+        // Generate random order number
+        function generateOrderNumber() {
+            return 'IQOS' + Math.floor(100000 + Math.random() * 900000);
+        }
+
+        // Show checkout confirmation modal
+        function showCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            const orderNumber = generateOrderNumber();
+            document.getElementById('order-number').textContent = orderNumber;
+            modal.classList.add('show');
+        }
+
+        // Clear cart and redirect
+        function clearCartAndRedirect() {
+            cart = [];
+            localStorage.setItem('iqosCart', JSON.stringify(cart));
+            window.location.href = 'index.html';
+        }
+
         // Checkout button
         document.getElementById('checkout-btn').addEventListener('click', function() {
             if (cart.length === 0) {
                 alert('Your cart is empty!');
                 return;
             }
-            alert('Proceeding to checkout... (This would redirect to a checkout page)');
+            
+            // Calculate total cart value
+            const cartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Generate order ID
+            const orderId = generateOrderNumber();
+            
+            // Prepare cart details for tracking
+            const cartDetails = cart.map(item => ({
+                product_name: item.title,
+                product_price: item.price,
+                product_quantity: item.quantity
+            }));
+            
+            // Track purchase event with OneSignal
+            if (window.OneSignal) {
+                const properties = {
+                    "cart_value": cartValue,
+                    "order_id": orderId,
+                    "cart_details": cartDetails
+                };
+                window.OneSignal.User.trackEvent('purchase_made', properties);
+            }
+            
+            // Show confirmation modal
+            showCheckoutModal();
+            
+            // Clear cart after showing modal
+            setTimeout(() => {
+                cart = [];
+                localStorage.setItem('iqosCart', JSON.stringify(cart));
+            }, 500);
         });
 
         // Promo code
@@ -637,6 +846,11 @@
         // Make cart icon clickable
         document.getElementById('cart-icon').addEventListener('click', function() {
             location.reload();
+        });
+
+        // Return to shop button in modal
+        document.getElementById('return-home').addEventListener('click', function() {
+            clearCartAndRedirect();
         });
 
         // Initialize page

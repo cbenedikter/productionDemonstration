@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+    <link rel="icon" type="image/x-icon" href="https://www.iqos.com/content/dam/iqos/global/marketing/brand/logo/nbw/favicon.ico">
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
             window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -915,6 +915,17 @@
             
             // Update cart count
             updateCartCount();
+            
+            // Track event with OneSignal
+            if (window.OneSignal) {
+                const properties = {
+                    "product_name": addedProduct.title,
+                    "product_price": addedProduct.price,
+                    "product_image": addedProduct.image,
+                    "quantity": addedProduct.quantity
+                };
+                window.OneSignal.User.trackEvent('updated_cart', properties);
+            }
             
             // Show modal instead of alert
             showModal(addedProduct);
