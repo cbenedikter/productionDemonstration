@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQOS ILUMA Starter Kits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #F5F5F5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-menu li {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .nav-menu a:hover {
+            color: #00A3A1;
+        }
+
+        .dropdown-icon::after {
+            content: '▼';
+            font-size: 0.7rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-right a {
+            text-decoration: none;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .nav-right a:hover {
+            color: #00A3A1;
+        }
+
+        .badge {
+            background-color: #00D4D4;
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.3rem;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Main Container */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            gap: 2rem;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 20%;
+            background-color: #FFFFFF;
+            padding: 2rem;
+            border-radius: 8px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .sidebar h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .filter-section h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .radio-group input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #00A3A1;
+        }
+
+        .remove-filter {
+            color: #00A3A1;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .remove-filter:hover {
+            color: #008887;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 800px;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .product-grid > div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Product Card */
+        .product-card {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-image-container {
+            background: linear-gradient(135deg, #00A3A1 0%, #00D4D4 100%);
+            padding: 2rem;
+            position: relative;
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badges {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .product-badge {
+            background-color: #00D4D4;
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-badge.best-value {
+            background-color: #00A3A1;
+        }
+
+        .product-badge.was-price {
+            background-color: white;
+            color: #333;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .device-placeholder {
+            width: 120px;
+            height: 180px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .pack-placeholder {
+            width: 100px;
+            height: 70px;
+            background: linear-gradient(45deg, #1a5490, #2d6bb5);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .color-selector {
+            display: flex;
+            gap: 0.4rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+        }
+
+        .color-dot:nth-child(1) { background-color: #E8E8E8; }
+        .color-dot:nth-child(2) { background-color: #B8B8B8; }
+        .color-dot:nth-child(3) { background-color: #D4AF37; }
+        .color-dot:nth-child(4) { background-color: #8B7355; }
+
+        .color-text {
+            color: white;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.8rem;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #FFB800;
+            font-size: 1rem;
+        }
+
+        .stars.empty {
+            color: #E0E0E0;
+        }
+
+        .rating-count {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .buy-now-btn {
+            background-color: #34303d;
+            color: #ffffff;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-top: auto;
+        }
+
+        .buy-now-btn:hover {
+            background-color: #00d1d2;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background-color: #F5F5F5;
+            color: #333;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00A3A1 0%, #00D4D4 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-product-image {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #00A3A1 0%, #00D4D4 100%);
+            border-radius: 8px;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-product-details {
+            flex: 1;
+        }
+
+        .modal-product-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .modal-product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00A3A1;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-product-quantity {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .modal-btn-primary {
+            background-color: #34303d;
+            color: #ffffff;
+        }
+
+        .modal-btn-primary:hover {
+            background-color: #00d1d2;
+        }
+
+        .modal-btn-secondary {
+            background-color: #F5F5F5;
+            color: #333;
+            border: 1px solid #E0E0E0;
+        }
+
+        .modal-btn-secondary:hover {
+            background-color: #E0E0E0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .nav-right {
+                flex-wrap: wrap;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="nav-left">
+                <div class="logo">IQOS</div>
+                <ul class="nav-menu">
+                    <li><a href="#" class="dropdown-icon">Shop IQOS</a></li>
+                    <li><a href="#" class="dropdown-icon">Discover IQOS</a></li>
+                    <li><a href="#" class="dropdown-icon">Vaping</a></li>
+                    <li><a href="#" class="dropdown-icon">Nicotine pouches</a></li>
+                    <li><a href="#" class="dropdown-icon">Services</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <a href="#">IQOS CLUB</a>
+                <a href="#">Subscription<span class="badge">New</span></a>
+                <a href="#">Find a store</a>
+                <a href="#">Important info</a>
+                <span class="icon">👤</span>
+                <span class="icon">🛒</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2>FILTERS</h2>
+            <div class="filter-section">
+                <h3>Sort</h3>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="sort" value="low-to-high">
+                        Price - Low to high
+                    </label>
+                    <label>
+                        <input type="radio" name="sort" value="high-to-low">
+                        Price - High to low
+                    </label>
+                </div>
+                <div class="remove-filter">Remove filter</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>IQOS ILUMA Starter Kits (5)</h1>
+                <p>Explore our IQOS starter kit range for IQOS ILUMA i and IQOS ILUMA. Our heated tobacco kits include your choice of 2 packs of TEREA in the Starter Kit price. IQOS ILUMA devices are available in a wide variety of colours to choose from.</p>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="product-grid">
+                <!-- Product 1 -->
+                <div>
+                    <div class="product-card">
+                        <img src="https://media.iqos.com/is/image/pmintl/product/450px/ILUMA+i+ONE+Starter+Kit-pmi_ILUMAiONEStarterKit_00_gb-1757591207528.png" alt="ILUMA i ONE Starter Kit" style="width: 100%; height: auto; object-fit: contain;">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">ILUMA i ONE Starter Kit</h3>
+                        <p class="product-description">The all-new IQOS ILUMA i ONE, offering up to 20 consecutive uses with a single charge. Includes 2 packs of TEREA heated tobacco sticks.</p>
+                        <div class="product-price">£29.00</div>
+                        <div class="product-rating">
+                            <span class="stars empty">★★★★★</span>
+                            <span class="rating-count">0.0 (0)</span>
+                        </div>
+                        <button class="buy-now-btn">Buy now</button>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div>
+                    <div class="product-card">
+                        <img src="https://media.iqos.com/is/image/pmintl/product/450px/IQOS+ILUMA+Starter+Kit-pmi_IQOSILUMAStarterKit_00_gb-1754999403378.png" alt="ILUMA i ONE Starter Kit" style="width: 100%; height: auto; object-fit: contain;">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">IQOS ILUMA Starter Kit</h3>
+                        <p class="product-description">The iconic design of IQOS, with bladeless technology at its core. Includes 2 packs of TEREA heated tobacco sticks.</p>
+                        <div class="product-price">£35.00</div>
+                        <div class="product-rating">
+                            <span class="stars">★★★★</span><span class="stars empty">★</span>
+                            <span class="rating-count">4.5 (144)</span>
+                        </div>
+                        <button class="buy-now-btn">Buy now</button>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div>
+                    <div class="product-card">
+                        <img src="https://media.iqos.com/is/image/pmintl/product/450px/+IQOS+ILUMA+i+Starter+Kit-pmi_ILUMAiStarterKit_00_gb-1746694080596.png" alt="ILUMA i ONE Starter Kit" style="width: 100%; height: auto; object-fit: contain;">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">IQOS ILUMA i Starter Kit</h3>
+                        <p class="product-description">Our iconic design, with new advanced features that give you flexibility of moments. Includes 2 packs of TEREA heated tobacco sticks.</p>
+                        <div class="product-price">£59.00</div>
+                        <div class="product-rating">
+                            <span class="stars">★★★★</span><span class="stars empty">★</span>
+                            <span class="rating-count">4.2 (16)</span>
+                        </div>
+                        <button class="buy-now-btn">Buy now</button>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div>
+                    <div class="product-card">
+                        <img src="https://media.iqos.com/is/image/pmintl/product/450px/IQOS+ILUMA+PRIME+Starter+Kit-pmi_IQOSILUMAPrimeStarterKit_00_gb-1757429634315.png" alt="IQOS ILUMA PRIME Starter Kit" style="width: 100%; height: auto; object-fit: contain;">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">IQOS ILUMA PRIME Starter Kit</h3>
+                        <p class="product-description">An all-aluminum body and refined design. Includes 2 packs of TEREA heated tobacco sticks.</p>
+                        <div class="product-price">£79.00</div>
+                        <div class="product-rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-count">4.6 (89)</span>
+                        </div>
+                        <button class="buy-now-btn">Buy now</button>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div>
+                    <div class="product-card">
+                        <img src="https://media.iqos.com/is/image/pmintl/product/450px/IQOS+ILUMA+i+PRIME+Starter+Kit-pmi_ILUMAiPRIMEStarterKit_00_gb-1744622280910.png" alt="IQOS ILUMA ONE Starter Kit" style="width: 100%; height: auto; object-fit: contain;">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">IQOS ILUMA i PRIME Starter Kit</h3>
+                        <p class="product-description">Our most refined design, with new advanced features that give you flexibility of moments. Includes 2 packs of TEREA heated tobacco sticks.</p>
+                        <div class="product-price">£89</div>
+                        <div class="product-rating">
+                            <span class="stars">★★★★</span><span class="stars empty">★</span>
+                            <span class="rating-count">4.7 (3)</span>
+                        </div>
+                        <button class="buy-now-btn">Buy now</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add to Cart -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-content">
+            <div class="modal-close" id="modal-close">×</div>
+            <div class="modal-header">
+                <div class="modal-icon">✓</div>
+                <div class="modal-title">Added to Cart</div>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Product details will be inserted here -->
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" id="continue-shopping">Continue Shopping</button>
+                <button class="modal-btn modal-btn-primary" id="view-cart">View Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get all radio buttons for sorting
+        const sortRadios = document.querySelectorAll('input[name="sort"]');
+        const productGrid = document.querySelector('.product-grid');
+        
+        // Add event listeners to radio buttons
+        sortRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                sortProducts(this.value);
+            });
+        });
+
+        function sortProducts(sortType) {
+            // Get all product containers (the wrapper divs)
+            const products = Array.from(productGrid.children);
+            
+            // Sort products based on price
+            products.sort((a, b) => {
+                // Extract price from product-price div
+                const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('£', ''));
+                const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('£', ''));
+                
+                if (sortType === 'low-to-high') {
+                    return priceA - priceB; // Ascending order
+                } else if (sortType === 'high-to-low') {
+                    return priceB - priceA; // Descending order
+                }
+                return 0;
+            });
+            
+            // Clear the grid and re-append sorted products
+            productGrid.innerHTML = '';
+            products.forEach(product => {
+                productGrid.appendChild(product);
+            });
+        }
+
+        // Handle "Remove filter" link
+        const removeFilter = document.querySelector('.remove-filter');
+        removeFilter.addEventListener('click', function() {
+            // Uncheck all radio buttons
+            sortRadios.forEach(radio => {
+                radio.checked = false;
+            });
+            
+            // Restore original order (could be improved by storing original order)
+            location.reload(); // Simple solution: reload the page
+        });
+
+        // ===== SHOPPING CART FUNCTIONALITY =====
+        
+        // Initialize cart from localStorage or create empty array
+        let cart = JSON.parse(localStorage.getItem('iqosCart')) || [];
+        
+        // Update cart count in header
+        function updateCartCount() {
+            const cartIcon = document.querySelector('.icon:last-child');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            // Remove existing badge if any
+            const existingBadge = cartIcon.querySelector('.cart-count');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            // Add badge if there are items
+            if (totalItems > 0) {
+                const badge = document.createElement('span');
+                badge.className = 'cart-count';
+                badge.textContent = totalItems;
+                badge.style.cssText = 'position: absolute; top: -8px; right: -8px; background: #00d1d2; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold;';
+                cartIcon.style.position = 'relative';
+                cartIcon.appendChild(badge);
+            }
+        }
+        
+        // Show modal function
+        function showModal(product) {
+            const modal = document.getElementById('cart-modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            // Populate modal with product details
+            modalBody.innerHTML = `
+                <div class="modal-product-image">
+                    <img src="${product.image}" alt="${product.title}">
+                </div>
+                <div class="modal-product-details">
+                    <div class="modal-product-title">${product.title}</div>
+                    <div class="modal-product-price">${product.priceFormatted}</div>
+                    <div class="modal-product-quantity">Quantity: ${product.quantity}</div>
+                </div>
+            `;
+            
+            // Show modal
+            modal.classList.add('show');
+        }
+        
+        // Hide modal function
+        function hideModal() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.remove('show');
+        }
+        
+        // Add to cart function
+        function addToCart(productElement) {
+            const title = productElement.querySelector('.product-title').textContent;
+            const price = productElement.querySelector('.product-price').textContent;
+            const priceValue = parseFloat(price.replace('£', ''));
+            const image = productElement.querySelector('.product-card img').src;
+            const description = productElement.querySelector('.product-description').textContent;
+            
+            // Check if item already exists in cart
+            const existingItem = cart.find(item => item.title === title);
+            
+            let addedProduct;
+            if (existingItem) {
+                existingItem.quantity += 1;
+                addedProduct = existingItem;
+            } else {
+                addedProduct = {
+                    title: title,
+                    price: priceValue,
+                    priceFormatted: price,
+                    image: image,
+                    description: description,
+                    quantity: 1
+                };
+                cart.push(addedProduct);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('iqosCart', JSON.stringify(cart));
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Show modal instead of alert
+            showModal(addedProduct);
+        }
+        
+        // Add event listeners to all "Buy now" buttons
+        const buyButtons = document.querySelectorAll('.buy-now-btn');
+        buyButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productContainer = this.closest('div').parentElement;
+                addToCart(productContainer);
+            });
+        });
+        
+        // Make cart icon clickable to go to shopping bag
+        const cartIcon = document.querySelector('.icon:last-child');
+        cartIcon.addEventListener('click', function() {
+            window.location.href = 'shopping-bag.html';
+        });
+        cartIcon.style.cursor = 'pointer';
+        
+        // Initialize cart count on page load
+        updateCartCount();
+
+        // Modal event listeners
+        const modal = document.getElementById('cart-modal');
+        const modalClose = document.getElementById('modal-close');
+        const continueShopping = document.getElementById('continue-shopping');
+        const viewCart = document.getElementById('view-cart');
+
+        // Close modal when clicking X
+        modalClose.addEventListener('click', hideModal);
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+
+        // Continue shopping button
+        continueShopping.addEventListener('click', hideModal);
+
+        // View cart button
+        viewCart.addEventListener('click', function() {
+            window.location.href = 'shopping-bag.html';
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideModal();
+            }
+        });
+    </script>
+</body>
+</html>
